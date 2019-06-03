@@ -7,6 +7,7 @@ import com.mycompany.myapp.domain.dto.CourseDto;
 import com.mycompany.myapp.domain.dto.CourseWithTNDto;
 import com.mycompany.myapp.repository.CourseRepository;
 import com.mycompany.myapp.repository.UserCourseRepository;
+import com.mycompany.myapp.repository.UserRepository;
 import com.mycompany.myapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,9 @@ public class CourseService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     List<CourseDto> courseDtos = new ArrayList<>();
 
@@ -69,18 +73,20 @@ public class CourseService {
         }
     }
 
-    public void addCourse(CourseDto course) throws Exception{
+    public void addCourse(CourseWithTNDto course) throws Exception{
         Optional<Course> courseDto = courseRepository.findCourseByCourseName(course.getCourseName());
-
         if(courseDto.isPresent()){
             throw new Exception("Course is existing.");
         }
+
+        Optional<User> teacherDto = userRepository.findOneByLogin(course.getTeacherName());
+        User teacher = teacherDto.get();
 
         Course courseBeingSaved = Course.builder()
             .courseName(course.getCourseName())
             .courseContent(course.getCourseContent())
             .courseLocation(course.getCourseContent())
-            .teacherId(course.getTeacherId())
+            .teacherId(teacher.getId())
             .build();
 
         try {
@@ -88,7 +94,6 @@ public class CourseService {
         } catch (Exception e){
             throw new Exception(e.getMessage());
         }
-
     }
 
     public void deleteCourse(String courseName) throws Exception{
@@ -106,18 +111,17 @@ public class CourseService {
     }
 
 
-    public void updateCourse(CourseDto course) throws Exception{
+    public void updateCourse(CourseWithTNDto course) throws Exception{
         Optional<Course> OptionalExistingCourse = courseRepository.findCourseByCourseName(course.getCourseName());
-
+        Optional<User> teacherInfo = userRepository.findOneByLogin(course.getTeacherName());
         if(!OptionalExistingCourse.isPresent()){
             throw new Exception("Course is not exist.");
         }
-
+        User teacher = teacherInfo.get();
         Course existingCourse = OptionalExistingCourse.get();
         existingCourse.setCourseContent(course.getCourseContent());
         existingCourse.setCourseLocation(course.getCourseLocation());
         existingCourse.setCourseName(course.getCourseName());
-        existingCourse.setTeacherId(course.getTeacherId());
-
+        existingCourse.setTeacherId(teacher.getId());
     }
 }

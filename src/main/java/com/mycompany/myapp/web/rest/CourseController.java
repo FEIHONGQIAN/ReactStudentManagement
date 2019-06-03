@@ -53,7 +53,7 @@ public class CourseController {
     }
 
     @PostMapping(path = "/api/course/addCourse", produces = "application/json")
-    public HttpStatus addCourse(@RequestBody @NotNull CourseDto course) {
+    public HttpStatus addCourse(@RequestBody @NotNull CourseWithTNDto course) {
         try {
             courseService.addCourse(course);
             return HttpStatus.OK;
@@ -63,7 +63,7 @@ public class CourseController {
     }
 
     @PutMapping(path = "/api/course/updateCourse", produces = "application/json")
-    public HttpStatus updateCourse(@RequestBody @NotNull CourseDto course) {
+    public HttpStatus updateCourse(@RequestBody @NotNull CourseWithTNDto course) {
         try {
             courseService.updateCourse(course);
             return HttpStatus.OK;
@@ -73,7 +73,7 @@ public class CourseController {
     }
 
     @PostMapping(path = "/api/course/createCourse", produces = "application/json")
-    public HttpStatus createCourse(@RequestBody @NotNull CourseDto course) {
+    public HttpStatus createCourse(@RequestBody @NotNull CourseWithTNDto course) {
         try {
             courseService.addCourse(course);
             return HttpStatus.OK;
@@ -82,7 +82,7 @@ public class CourseController {
         }
     }
 
-    @DeleteMapping(path = "/api/course/deleteCourse/{courseName}", produces = "application/js")
+    @DeleteMapping(path = "/api/course/deleteCourse/{courseName}", produces = "application/json")
     public HttpStatus deleteCourse(@NotNull @PathVariable("courseName") String courseName) {
         try {
             courseService.deleteCourse(courseName);
